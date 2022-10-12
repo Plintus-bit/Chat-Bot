@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 robo_replics = []
 user_replics = []
+separator = ';'
 RoboTalk = "Бот: "
-robot_dk = "Я ещё не умею отвечать на ваш вопрос.\nЧто мне следует отвечать? (перечислите через запятую)"
+robot_dk = "Я ещё не умею отвечать на ваш вопрос.\nЧто мне следует отвечать? (перечислите через ;)"
 robot_thanks = "Спасибо! Теперь буду знать"
+robot_excep_ans = "Хорошо, тогда продолжим общение"
+robot_exception = "Вы написали сообщение без ошибки? (да/нет)"
 
 def onStart() -> None:
     # Чтение из файла ответов
     with open('ans.txt', encoding='UTF-8') as ansfile:
         for st in ansfile:
             st = st.replace('\n', '')
-            robo_replics.append(st.split(','))
+            robo_replics.append(st.split(separator))
 
     # Чтение из файла реплик
     with open('rep.txt', encoding='UTF-8') as repfile:
@@ -20,14 +23,31 @@ def onStart() -> None:
 
 
 # Функция записи в файлы
-def exitProc() -> None:
-    pass
+def exitProc(bot_reps, us_rep) -> None:
+    end_char = '\n'
+    with open('ans.txt', encoding='UTF-8', mode='a') as ansfile:
+        ansfile.write(end_char + bot_reps)
+    with open('rep.txt', encoding='UTF-8', mode='a') as repfile:
+        repfile.write(end_char + us_rep)
 
 
 # Функция обучения бота
-def learn(answer: str = 'none') -> None:
-    if answer == 'none':
-        return
+def learn(us_rep: str) -> bool:
+    print(RoboTalk + robot_exception)
+    us_ans = input().lower()
+    if us_ans == "да" or us_ans == "д":
+        print(RoboTalk + robot_dk)
+        # на случай, если разделитель по умолчанию для файлов
+        # будет отличаться от разделителя для пользователя
+        new_bot_rep = input()\
+            .replace('; ', separator)\
+            .replace(' ;', separator)\
+            .replace(';', separator)
+        exitProc(new_bot_rep, us_rep)
+        user_replics.append(us_rep)
+        robo_replics.append(new_bot_rep.split(separator))
+        return True
+    return False
 
 
 # Функция получения рандомного ответа из массива ответов бота
@@ -60,9 +80,10 @@ def reply(us_rep='пока') -> bool:
             # тут рандом будет
             print(RoboTalk + robo_replics[i][0])
             return True
-    print(robot_dk)
-    rep = input()
-    print(robot_thanks)
+    if learn(us_rep):
+        print(RoboTalk + robot_thanks)
+    else:
+        print(RoboTalk + robot_excep_ans)
     return True
 
 
