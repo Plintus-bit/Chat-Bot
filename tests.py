@@ -11,6 +11,15 @@ class Testrep(unittest.TestCase):
         self.assertEqual(reply('бра'), True)
         self.assertEqual(reply('пока'), False)
 
+    def test_learn(self):
+        # Идёт проверка функции учения бота, где мы подаём строку и бот запоминает наш ответ
+        self.assertEqual(learn('мы боты'), True)
+        self.assertEqual(learn('мы  не боты'), False)
+
+    def test_isInUsRep(self):
+        # Идёт проверка функции учения бота, где мы подаём строку и бот запоминает наш ответ
+        main()
+        self.assertEqual(isInUsRep('мы боты', 7), True)
 
 if __name__ == '__main__':
     unittest.main()
