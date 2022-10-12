@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from random import randint
 
+
 robo_replics = []
 user_replics = []
 separator = ';'
@@ -9,6 +10,7 @@ robot_dk = "Я ещё не умею отвечать на ваш вопрос.\n
 robot_thanks = "Спасибо! Теперь буду знать"
 robot_excep_ans = "Хорошо, тогда продолжим общение"
 robot_exception = "Вы написали сообщение без ошибки? (да/нет)"
+
 
 def onStart() -> None:
     # Чтение из файла ответов
@@ -54,9 +56,6 @@ def learn(us_rep: str) -> bool:
 
 # Функция получения рандомного ответа из массива ответов бота
 def getRandomBotAnswer(answer_index: int) -> int:
-    # если в массиве больше одного символа,
-    # рекомендую сделать shuffle
-    # и взять первое (нулевое) значение из массива
     return randint(0, len(robo_replics[answer_index]) - 1)
 
 
@@ -74,12 +73,10 @@ def isInUsRep(us_rep: str, us_rep_index: int) -> bool:
 # Функция ответа бота при получении реплики от пользователя
 def reply(us_rep='пока') -> bool:
     if us_rep == 'пока':
-        # тут рандом будет
         print(RoboTalk + robo_replics[1][getRandomBotAnswer(1)])
         return False
     for i in range(len(user_replics)):
         if isInUsRep(us_rep, i):
-            # тут рандом будет
             print(RoboTalk + robo_replics[i][getRandomBotAnswer(i)])
             return True
     if learn(us_rep):
